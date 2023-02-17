@@ -1178,10 +1178,6 @@ video {
   transition-duration: 500ms;
 }
 
-.duration-150 {
-  transition-duration: 150ms;
-}
-
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1332,20 +1328,17 @@ body{
   --tw-shadow: var(--tw-shadow-colored);
 }
 
-.dark .dark\:duration-150 {
-  transition-duration: 150ms;
-}
-
-.dark .dark\:duration-300 {
-  transition-duration: 300ms;
-}
-
 .dark .dark\:duration-500 {
   transition-duration: 500ms;
 }
 
 .dark .dark\:ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .dark\:hover\:text-primary:hover {
+  --tw-text-opacity: 1;
+  color: rgb(20 184 166 / var(--tw-text-opacity));
 }
 
 @media (min-width: 768px) {
