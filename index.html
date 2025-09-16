@@ -1,472 +1,695 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portofolio Website</title>
-    <link href="dist/output.css" rel="stylesheet" />
-    <script>
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.documentElement.classList.add('dark')
-} else {
-  document.documentElement.classList.remove('dark')
-}
-    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Name | Senior iOS Engineer</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React and ReactDOM libraries -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel to compile JSX in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lottie Player for animations -->
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+
+    <!-- Firebase SDKs (Compat version for script tag usage) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* A simple font to match the elegant theme */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Add padding to the top to prevent content from being hidden by the fixed header */
+            padding-top: 72px; 
+        }
+
+        /* Animation classes for the carousel */
+        .slide-out-left { transform: translateX(-25px); opacity: 0; }
+        .slide-in-from-right { transform: translateX(25px); opacity: 0; }
+        .slide-out-right { transform: translateX(25px); opacity: 0; }
+        .slide-in-from-left { transform: translateX(-25px); opacity: 0; }
+    </style>
 </head>
 <body>
-    <!-- Header Start -->
-    <header class="bg-transparent absolute top-0 left-0 w-full flex items-center z-10">
-        <div class="container">
-            <div class="flex items-center justify-between relative">
-                <div class="px-4">
-                    <a href="#home" class="font-bold text-3xl text-primary block py-6">finnchristoffer</a>
-                </div>
-                    <div class="flex items-center px-4">
-                        <button id="hamburger" name="hamburger" type="button" class="block absolute right-4 lg:hidden">
-                            <span class="hamburger-line transition duration-300 ease-in-out origin-top-left"></span>
-                            <span class="hamburger-line transition duration-300 ease-in-out"></span>
-                            <span class="hamburger-line transition duration-300 ease-in-out origin-bottom-left"></span>
-                        </button>
+    <!-- This is where our React app will be rendered -->
+    <div id="root"></div>
 
-                        <nav id="nav-menu" class="hidden absolute py-5 bg-white shadow-lg rounded-lg max-w-[250px] w-full right-4 top-3/4 lg:block lg:static lg:bg-transparent lg:max-w-full lg:shadow-none lg:rounded-none dark:bg-dark lg:dark:bg-transparent dark:shadow-slate-400 dark: transition dark:duration-500 dark:ease-in-out">
-                            <ul class="block lg:flex">
-                                <li class="group">
-                                    <a href="#home" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Home</a>
-                                </li>
-                                <li class="group">
-                                    <a href="#about" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">About Me</a>
-                                </li>
-                                <li class="group">
-                                    <a href="#milestone" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Milestones</a>
-                                </li>
-                                <li class="group">
-                                    <a href="#porfolio" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Portfolio</a>
-                                </li>
-                                <li class="group">
-                                    <a href="#blog" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Blog</a>
-                                </li>
-                                <li class="group">
-                                    <a href="#contact" class="text-base text-dark py-2 mx-8 flex group-hover:text-primary dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Contact</a>
-                                </li>
-                                <li class="mt-3 lg:mt-0 flex items-center pl-8">
-                                    <div class="flex">
-                                        <span class="mr-2 text-sm text-slate-500">light</span>
-                                        <input type="checkbox" id="dark-toggle" class="hidden"/>
-                                        <label for="dark-toggle">
-                                            <div class="flex h-5 w-9 cursor-pointer items-center rounded-full bg-slate-500 p-1">
-                                                <div class="toggle-circle h-4 w-4 rounded-full bg-white transition duration-300 ease-in-out"></div>
-                                            </div>
-                                        </label>
-                                        <span class="ml-2 text-sm text-slate-500">dark</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </nav>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Header End -->
+    <!-- Our React code goes inside this script tag with type="text/babel" -->
+    <script type="text/babel">
+        // Your Firebase project configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDuxF-OYcps8e4NudAoexd5Ik6ZcDFgYGw",
+            authDomain: "portfolio-website-b6bf2.firebaseapp.com",
+            projectId: "portfolio-website-b6bf2",
+            storageBucket: "portfolio-website-b6bf2.appspot.com",
+            messagingSenderId: "11911323854",
+            appId: "1:11911323854:web:3c16316b0760515483f09f",
+            measurementId: "G-ZVYTBP6ETD"
+        };
 
-    <!-- Hero Section Start -->
-    <section id="home" class ="pt-36 dark:bg-dark dark: transition dark:duration-500 dark:ease-in-out">
-        <div class="container">
-            <div class="flex flex-wrap">
-                <div class="w-full self-center px-4 lg:w-1/2">
-                    <h1 class ="text-base font-semibold text-primary md:text-xl">Hi everyone 👋🏻, My name is<span class ="block font-bold text-dark text-4xl mt-1 mb-3 lg:text-5xl dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Finn Christoffer Kurniawan</span></h1>
-                    <h2 class="font-medium text-secondary text-lg mb-5 lg:text-2xl dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Mobile Developer | <span class="text-dark dark:text-white dark: transition dark:duration-500 dark:ease-in-out">iOS Developer</span></h2>
-                    <p class="font-medium text-slate-400 mb-10 leading-relaxed ">WWDC 2022 Scholarship Winner & <br>Apple Developer Academy Graduate</p>
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            const rootElement = document.getElementById('root');
+            rootElement.innerHTML = '<div class="min-h-screen flex items-center justify-center text-red-500">Error: Could not connect to Firebase. Please check your firebaseConfig keys.</div>';
+        }
 
-                    <a href="#" class="text-base font font-semibold text-white bg-primary py-3 px-8 rounded-full hover:shadow-lg hover:opacity-80 transition duration-300 ease-in-out">Contact Me</a>
-                </div>
-                <div class="w-full self-end px-4 lg:w-1/2">
-                    <div class="relative mt-10 lg:mt-9 lg:right-0">
-                        <img src="dist/img/finn.png" alt="Finn" class="relative z-10 max-w-full mx-auto"/>
-                        <span class="absolute bottom-0 left-1/2 -translate-x-1/2 md:scale-125">
-                            <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="#14b8a6" d="M62.2,-22.6C69.2,1.4,55.7,29.7,33.7,45.4C11.8,61.1,-18.6,64.2,-40.8,49.6C-63.1,35,-77.3,2.6,-69.1,-23C-61,-48.5,-30.5,-67.4,-1.4,-66.9C27.6,-66.4,55.2,-46.7,62.2,-22.6Z" transform="translate(100 100) scale(1.1)" />
-                              </svg>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Hero Section End -->
+        const { useState, useEffect } = React;
 
-    <!-- About Section Start -->
-    <section id="about" class="pt-36 pb-32 dark:bg-dark dark: transition dark:duration-500 dark:ease-in-out">
-        <div class="container">
-            <div class="flex flex-wrap">
-                <div class="w-full px-4 mb-10 lg:w-1/2">
-                    <h4 class="font-bold uppercase text-primary text-lg mb-3">About Me</h4>
-                    <h2 class="font-bold text-dark text-3xl mb-5 max-w-md lg:text-4xl dark:text-white dark: transition dark:duration-500 dark:ease-in-out">iOS Developer</h2>
-                    <p class="font-medium text-base text-secondary max-w-xl lg:text-lg text-justify">Experienced iOS Developer with Swift, iOS Development kit, and currently looking for role as iOS Developer to help me grow and learn from experienced team members about technology and apple environment itself. Long life learners who active in organization and recently graduate computer science BINUS University with experience internship-scholarship at Apple Developer Academy.</p>
-                </div>
-                <div class="w-full px-4 lg:w-1/2">
-                    <h3 class="font-semibold text-dark text-2xl mb-4 lg:text-3xl lg:pt-10 dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Let's Connect</h3>
-                    <p class="font-medium text-base text-justify text-secondary mb-6 lg:text-lg">I’m very open to connect with you so don’t hesitate to reach out to me in any social platform.</p>
-                    <div class="flex items-center">
-                       <!-- LinkedIn -->
-                        <a href="https://www.linkedin.com/in/finnchristoffer/" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark:text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6 .286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                        </a>
+        // -- SVG ICONS AS REACT COMPONENTS -- //
+        const iconPaths = {
+            Mail: <><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></>,
+            Linkedin: <><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></>,
+            Github: <><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></>,
+            Apple: <><path d="M17.13,21.52a5.06,5.06,0,0,1-1.69.32,4.3,4.3,0,0,1-3.33-1.75,4.3,4.3,0,0,1-3.33,1.75,5,5,0,0,1-1.81-.36c-1.45-.48-2.81-1.89-3.65-3.81A10.33,10.33,0,0,1,5.5,11.2a9.64,9.64,0,0,1,4.3-2.35,5.13,5.13,0,0,1,2.09-.41,1.5,1.5,0,0,1,.12,0,4.72,4.72,0,0,1,2.15.41,10.89,10.89,0,0,1,4.42,2.56,1.4,1.4,0,0,0,1,.48,1.36,1.36,0,0,0,1.08-.56,1.38,1.38,0,0,0-.2-1.94,13.1,13.1,0,0,0-5.65-3.1,5.4,5.4,0,0,0-2.87-.59,10.74,10.74,0,0,0-5.49,1.51,11.25,11.25,0,0,0-4,5.3,10.43,10.43,0,0,0,1,6.6,5.3,5.3,0,0,0,4.42,2.58,4.5,4.5,0,0,0,3.33-1.59,4.5,4.5,0,0,0,3.33,1.59,4.92,4.92,0,0,0,2.5-.69c1.25-.56,2.25-1.56,2.81-2.92a1.39,1.39,0,0,0-2.62-1.07,5.5,5.5,0,0,1-1.63,2.21Z"/><path d="M13.88,4.12a4.6,4.6,0,0,1,2,3.8,4.32,4.32,0,0,1-2.49,3.75,4.5,4.5,0,0,1-4.24-2.11,4.32,4.32,0,0,1,2.49-3.75A4.54,4.54,0,0,1,13.88,4.12Z"/></>,
+            Swift: <path d="m24.698 16.885c.063-.126.063-.252.126-.377 1.512-5.923-2.08-12.853-8.254-16.507 1.952 2.446 3.132 5.582 3.132 8.995 0 1.032-.108 2.038-.313 3.009l.017-.095c-.087.39-.195.728-.33 1.052l.015-.041c-.2-.111-.365-.215-.524-.327l.019.012c-4.757-3.149-8.901-6.575-12.651-10.389l-.011-.011c2.438 3.602 4.965 6.75 7.722 9.678l-.036-.039c-4.121-2.64-7.702-5.378-11.039-8.381l.076.067c.474.784.972 1.463 1.524 2.093l-.014-.017c3.3 4.423 6.99 8.272 11.099 11.626l.117.092c-3.213 1.955-7.687 2.08-12.224 0-1.203-.57-2.236-1.2-3.195-1.923l.046.033c2.022 3.147 4.88 5.601 8.261 7.079l.12.047c1.693.839 3.687 1.331 5.796 1.331s4.103-.491 5.874-1.365l-.078.035h.064c.146-.065.271-.15.378-.252h-.001c1.512-.756 4.474-1.573 6.112 1.573.44.882 1.259-3.213-1.827-6.994z"/>,
+            Flutter: <path fill-rule="nonzero" d="M13.503 2.001l-10 10 3.083 3.083 13.08-13.083h-6.163zm-.006 9.198L8.122 16.62 13.494 22h6.189l-5.387-5.4 5.389-5.4h-6.188z"/>,
+            React: <><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></>,
+            Server: <><rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect><rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect><line x1="6" x2="6.01" y1="6" y2="6"></line><line x1="6" x2="6.01" y1="18" y2="18"></line></>,
+            ArrowRight: <><line x1="5" x2="19" y1="12" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></>,
+            ArrowLeft: <><line x1="19" x2="5" y1="12" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></>,
+            Briefcase: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></>,
+            Award: <><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></>,
+            CheckCircle: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></>,
+            Star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>,
+            Menu: <><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></>,
+            X: <><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></>,
+            Search: <path d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"></path>,
+        };
 
-                        <!-- GitHub -->
-                        <a href="https://github.com/finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark:text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                        </a>
+        const Icon = ({ name, className }) => {
+            const pathData = iconPaths[name];
+            if (!pathData) return null;
 
-                        <!-- Youtube -->
-                        <a href="https://www.youtube.com/channel/UCINUxcUl_2JSQ5LkZHhQvcw" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark:text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>YouTube</title><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                        </a>
+            const svgProps = {
+                xmlns: "http://www.w3.org/2000/svg",
+                width: "24",
+                height: "24",
+                viewBox: "0 0 24 24",
+                className: className,
+            };
 
-                        <!-- Instagram -->
-                        <a href="https://www.instagram.com/finnchristoffer/" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark:text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Instagram</title><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
-                        </a>
-
-                        <!-- Medium -->
-                        <a href="https://medium.com/@finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark: text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Medium</title><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
-                        </a>
-
-                        <!-- Tiktok -->
-                        <a href="https://www.tiktok.com/@finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 hover:border-primary hover:bg-primary hover:text-white dark: text-slate-300 dark: transition dark:duration-500 dark:ease-in-out">
-                            <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>TikTok</title><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- About Section End -->
-
-    <!-- Milestone Section Start -->
-    <section id="milestone" class="pt-36 pb-32 bg-slate-700">
-            <div class="container">
-                <div class="w-full px-4">
-                    <div class="max-w-xl mx-auto text-center mb-16">
-                       <h4 class="font-semibold text-lg text-primary mb-2">Milestone</h4> 
-                       <h2 class="font-bold text-slate-100 text-3xl mb-4">Career Experience</h2>
-                       <p class="font-medium text-md text-secondary">A little history of my career for the past few years!</p>
-                    </div>
-                </div>
-                <div class="max-w-xl mx-auto" style="display: flex; justify-content: center; align-items: center;">
-                    <ol class="border-l-2 border-primary">
-                        <li>
-                          <div class="md:flex flex-start">
-                            <div class="bg-primary w-6 h-6 flex items-center justify-center rounded-full -ml-3">
-                              <svg aria-hidden="true" focusable="false" data-prefix="fas" class="text-white w-3 h-3" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h288c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-64zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path>
-                              </svg>
-                            </div>
-                            <div class="block p-5 rounded-lg shadow-lg bg-gray-100 max-w-md ml-6 mb-10">
-                              <h1 class="font-bold text-xl text-left text-primary mb-1 mr-3">March 2022 - December 2022</h1>
-                              <h4 class="font-semibold text-left text-primary mb-3">iOS Developer</h4>
-                              <p class="text-secondary mb-6 text-left">Apple Developer Academy
-                                  
-                              </p>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="md:flex flex-start">
-                            <div class="bg-primary w-6 h-6 flex items-center justify-center rounded-full -ml-3">
-                              <svg aria-hidden="true" focusable="false" data-prefix="fas" class="text-white w-3 h-3" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h288c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-64zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path>
-                              </svg>
-                            </div>
-                            <div class="block p-5 rounded-lg shadow-lg bg-gray-100 max-w-md ml-6 mb-10">
-                              <h1 class="font-bold text-xl text-left text-primary mb-1">December 2019 - October 2021</h1>
-                              <h4 class="font-semibold text-left text-primary mb-3">Barista</h4>
-                              <p class="text-secondary mb-6 text-left">Old Ben's Coffee
-                                  
-                              </p>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class="md:flex flex-start">
-                            <div class="bg-primary w-6 h-6 flex items-center justify-center rounded-full -ml-3">
-                              <svg aria-hidden="true" focusable="false" data-prefix="fas" class="text-white w-3 h-3" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="currentColor" d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm64-192c0-8.8 7.2-16 16-16h288c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16v-64zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path>
-                              </svg>
-                            </div>
-                            <div class="block p-5 rounded-lg shadow-lg bg-gray-100 max-w-md ml-6 mb-10">
-                              <h1 class="font-bold text-xl text-left text-primary mb-1 mr-8">June 2019 - November 2019</h1>
-                              <h4 class="font-semibold text-left text-primary mb-3">Event Organizer</h4>
-                              <p class="text-secondary mb-6 text-left">Testimo Wedding Organizer
-                              </p>
-                            </div>
-                          </div>
-                            </div>
-                          </div>
-                        </li>
-                      </ol>
-                </div>
-            </div>
-    </section>
-    <!-- Milestone Section End-->
-
-    <!-- Portfolio Section Start -->
-    <section id="porfolio" class="pt-36 pb-16 bg-slate-100 dark:bg-slate-700 dark: transition dark:duration-500 dark:ease-in-out">
-        <div class="container">
-            <div class="w-full px-4">
-                <div class="max-w-xl mx-auto text-center mb-16">
-                    <h4 class="font-semibold text-lg text-primary mb-2">Portfolio</h4>
-                    <h2 class="font-bold text-dark text-3xl mb4 dark:text-white dark: transition dark:duration-500 dark:ease-in-out
-                    ">List of Project</h2>
-                    <p class="font-medium text-md text-secondary">Here are a few project applications that I’ve worked on.</p>
-                </div>
-            </div>
-            <div class="w-full px-4 flex flex-wrap justify-center xl:w-10/12 xl:mx-auto">
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/moviefrenzy.jpg" alt="V60 Manual Brew" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/JemputAh-App" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">Movie Frenzy</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">MovieFrenzy is a Swift-based app that utilizes RxSwift and TMBD API to provide users with an extensive collection of movies and detailed information about each film. The app features an intuitive interface, personalized recommendations, and seamless navigation, thanks to the integration of RxSwift. Whether you're a casual moviegoer or a die-hard film fan, MovieFrenzy is a must-have app for anyone who loves movies.
-                    <br><br>
-                    Overall, MovieFrenzy is a powerful and user-friendly movie app that simplifies the movie-watching experience. Its extensive movie database, personalized recommendations, and advanced features make it an indispensable tool for anyone who wants to stay up-to-date with the latest releases or discover new films.</p>
-                </div>
-            <div class="w-full px-4 flex flex-wrap justify-center xl:w-10/12 xl:mx-auto">
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/jemputAh.jpg" alt="V60 Manual Brew" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/JemputAh-App" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">JemputAh (User & Driver)</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">JemputAh is a cross-platform E-Recycle app, built using Flutter framework, which allows it to be used on both iOS and Android devices. The app is integrated with Firebase cloud services, ensuring seamless and secure data storage and retrieval. With Flutter and Firebase, JemputAh provides a reliable and efficient service for all your recycling needs.</p>
-                </div>
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/v60.png" alt="V60 Manual Brew" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/WWDC22-V60-Manual-Brew" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">V60 Manual Brew</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">V60 Manual Brew is a Playground, that optimized display on iPad, simulation about making V60 Manual Brew. This app comes up from my experience when I become a former barista in my city for almost 2 years. That situation makes me wanna make a simulation of How to Make V60 Manual Brew and Japanese V60 Manual Brew. Don't forget to take a sip and enjoy your coffee cause coffee can make your day better.</p>
-                </div>
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/otin.jpeg" alt="Otin" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/nuro" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">Otin</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">OTIN is a visual schedule designed for autistic kids, where parents can easily create activity cards, set the schedule for the whole week, and handover the schedule for the kids. OTIN helps parents with Autism Spectrum Disorder (ASD) children in Indonesia to helps prevent their children tantrums, and improving self-independence by making them rely on schedule.</p>
-                </div>
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/nearme.png" alt="Landing Page" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/NearMe-MapKit-Swift" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">NearMe</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">NearMe is a convenient app that makes it easy to find local places that suit your needs. With just a few taps, you can search for the type of venue you're interested in, and our app will provide you with a list of options close to your location. Each listing includes comprehensive information about the venue, including detailed descriptions, directions to get there, and even a call button so you can contact them directly. Whether you're looking for a nearby restaurant, shopping center, or any other type of venue, NearMe has got you covered. With its user-friendly interface and accurate results, finding what you're looking for has never been easier.</p>
-                </div>
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/vegcation.png" alt="Landing Page" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/Mini_Challenge_2" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">Vegcation</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">Difficult to find a vegetarian restaurant while going outside? Don't worry, Vegcation is here to help you. Find vegetarian friendly restaurant near you.
-
-                    Vegcation provides vegetarian restaurant and non vegetarian restaurant with a vegetarian menu. It all depends on your choice.
-                        
-                    Let's explore Vegcation on test flight!
-                    </p>
-                </div>
-                <div class="mb-12 p-4 md:w-1/2">
-                    <div class="rounded-md shadow-md overflow-hidden">
-                        <img src="dist/img/portfolio/bumeals.png" alt="BuMeals" width="w-full" />
-                    </div>
-                    <h3 class="font-semibold text-xl text-dark mt-5 mb-3"><a href="https://github.com/finnchristoffer/BuMeals" target="_blank" class="hover:text-primary mb-3 dark:text-white dark: transition dark:duration-500 dark:ease-in-out dark:hover:text-primary">BuMeals</a></h3>
-                    <p class ="font-medium text-base text-secondary text-justify">"Terserah", a word that comes out of our mouth when we can't decide what to eat. Pregnant Women sometimes suffer from the same problem especially when they are craving for unhealthy food. It is hard for them to think about healthy food and decide on what to eat when they couldn't visualize any possible healthy menus.
-                    <br><br>
-                    BuMeals will provide "Ibu Hamil" with healthy meal choices to ensure they eat healthy and nutritional food during their pregnancy.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Portofolio Section End -->
-
-    <!-- Blog Section Start -->
-    <section id="blog" class="pt-36 pb-32 bg-slate-100 dark:bg-dark">
-        <div class="container">
-            <div class="w-full px-4">
-                <div class="max-w-xl mx-auto text-center mb-16">
-                    <h4 class="font-semibold text-lg text-primary mb-2">Blog</h4>
-                    <h2 class="font-bold text-dark text-3xl mb-4 dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Newest Update</h2>
-                    <p class="font-medium text-md text-secondary">Here is where I keep updates of my learning progress for you to check out.</p>
-                </div>
-            </div>
+            if (name === 'Apple' || name === 'Swift' || name === 'Search' || name === 'Flutter') {
+                svgProps.fill = "currentColor";
+            } else {
+                svgProps.fill = "none";
+                svgProps.stroke = "currentColor";
+                svgProps.strokeWidth = "2";
+                svgProps.strokeLinecap = "round";
+                svgProps.strokeLinejoin = "round";
+            }
             
+            if (name === 'React') {
+                svgProps.strokeWidth = "1";
+            }
+            
+            if (name === 'Swift' || name === 'Flutter') {
+                svgProps.viewBox = "0 0 32 32";
+            }
 
-            <div class="flex flex-wrap">
-                <div class="w-full px-4 lg:w-1/2 xl:w-1/3">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-10 dark:bg-slate-700 dark: transition dark:duration-500 dark:ease-in-out">
-                        <img src="https://source.unsplash.com/360x200?programming" class="w-full" alt="Programming" />
-                        <div class="py-8 px-6">
-                            <h3>
-                                <a href="#" class="block mb-3 font-semibold text-xl text-dark hover:text-primary truncate dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Live Preview using SwiftUI</a>
-                            </h3>
-                            <p class="font-medium text-base text-secondary mb-6">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos iure dolore reprehenderit? </p>
-                            <a href="#" class="font-medium text-sm text-white bg-primary py-2 px-4 rounded-lg hover:opacity-80">Read More</a>
+            return (
+                <svg {...svgProps}>
+                    {pathData}
+                </svg>
+            );
+        };
+
+
+        // -- REACT COMPONENTS -- //
+
+        const Header = ({ name, social }) => {
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+            const navLinks = [
+                { href: '#achievements', label: 'Achievements' },
+                { href: '#projects', label: 'Projects' },
+                { href: '#experience', label: 'Experience' },
+                
+                { href: '#contact', label: 'Contact' }
+            ];
+
+            return (
+                <>
+                    <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm z-40 border-b border-stone-200 h-18">
+                        <div className="container mx-auto px-6 h-full flex justify-between items-center">
+                            <a href="#hero" className="text-xl font-bold text-stone-800 tracking-wider">{name ? name.split(' ')[0] : ''}</a>
+                            
+                            <nav className="hidden md:flex items-center space-x-2">
+                                {navLinks.map(link => (
+                                    <a key={link.href} href={link.href} className="text-base font-medium text-stone-600 hover:text-teal-600 transition-colors px-3 py-2 rounded-md">{link.label}</a>
+                                ))}
+                            </nav>
+
+                             <div className="hidden md:flex items-center space-x-4">
+                                <a href={social?.github} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors">
+                                    <Icon name="Github" className="w-6 h-6" />
+                                </a>
+                                <a href={social?.linkedin} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors">
+                                    <Icon name="Linkedin" className="w-6 h-6" />
+                                </a>
+                            </div>
+
+                            <button onClick={() => setIsMenuOpen(true)} className="md:hidden text-stone-600 hover:text-teal-600">
+                                <Icon name="Menu" className="w-7 h-7" />
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* Mobile Menu Overlay */}
+                    <div className={`fixed inset-0 bg-white z-50 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`}>
+                        <div className="container mx-auto px-6 h-full flex flex-col">
+                            <div className="flex justify-between items-center h-18 border-b border-stone-200">
+                                <a href="#hero" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-stone-800 tracking-wider">{name ? name.split(' ')[0] : ''}</a>
+                                <button onClick={() => setIsMenuOpen(false)} className="text-stone-600 hover:text-teal-600">
+                                    <Icon name="X" className="w-8 h-8" />
+                                </button>
+                            </div>
+                            <nav className="flex flex-col items-center justify-center flex-grow space-y-8">
+                                {navLinks.map(link => (
+                                    <a key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl font-medium text-stone-800 hover:text-teal-600 transition-colors">{link.label}</a>
+                                ))}
+                            </nav>
+                             <div className="flex items-center justify-center space-x-6 pb-12">
+                                <a href={social?.github} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors">
+                                    <Icon name="Github" className="w-8 h-8" />
+                                </a>
+                                <a href={social?.linkedin} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors">
+                                    <Icon name="Linkedin" className="w-8 h-8" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
+        const Hero = ({ name, title, bio, email, skills, avatarUrl }) => {
+            const [isMounted, setIsMounted] = useState(false);
+            useEffect(() => {
+                const timer = setTimeout(() => setIsMounted(true), 100);
+                return () => clearTimeout(timer);
+            }, []);
+
+            return (
+                <section id="hero" className="min-h-screen flex items-center bg-white text-stone-800 -mt-[72px]">
+                    <div className="container mx-auto px-6">
+                        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+                            <div className="md:w-3/5 text-center md:text-left">
+                                <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+                                    <span className="text-stone-500">Hi, I'm {name}.</span>
+                                    <br />
+                                    A {title}.
+                                </h1>
+                                <p className="text-lg md:text-xl text-stone-600 mb-8 max-w-2xl mx-auto md:mx-0">
+                                    {bio}
+                                </p>
+                                
+                                <div className="mb-10">
+                                    <h3 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-4">Core Technologies</h3>
+                                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                                        {skills.map((skill, index) => (
+                                        <div key={index} className="flex items-center bg-stone-100 py-2 px-4 rounded-full transition-all hover:bg-stone-200 hover:-translate-y-1">
+                                            <div className="text-teal-600 mr-2.5"><Icon name={skill.icon} className="w-5 h-5" /></div>
+                                            <span className="text-stone-700 font-medium text-sm">{skill.name}</span>
+                                        </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+                                    <a href="#projects" className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-lg text-center transition-transform transform hover:scale-105 flex items-center justify-center">
+                                        View My Work <Icon name="ArrowRight" className="ml-2 w-5 h-5" />
+                                    </a>
+                                    <a href={`mailto:${email}`} className="bg-white hover:bg-stone-100 text-stone-700 font-bold py-3 px-6 rounded-lg text-center transition-colors border border-stone-300 flex items-center justify-center">
+                                        Get In Touch <Icon name="Mail" className="ml-2 w-5 h-5" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div className="md:w-2/5">
+                                <img 
+                                    src={avatarUrl} 
+                                    alt="Your Name" 
+                                    className={`w-64 h-64 md:w-80 md:h-80 rounded-full object-cover mx-auto shadow-lg border-4 border-stone-200 transition-all duration-1000 ease-out ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} 
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const Achievements = ({ achievements }) => {
+            const itemsPerPage = 3;
+            const totalPages = Math.ceil(achievements.length / itemsPerPage);
+            const [currentPage, setCurrentPage] = React.useState(1);
+            const [animationClass, setAnimationClass] = React.useState('');
+
+            const handlePageChange = (newPage) => {
+                if (newPage === currentPage || newPage < 1 || newPage > totalPages) return;
+                const direction = newPage > currentPage ? 'left' : 'right';
+                setAnimationClass(`slide-out-${direction}`);
+                setTimeout(() => {
+                    setCurrentPage(newPage);
+                    setAnimationClass(`slide-in-from-${direction === 'left' ? 'right' : 'left'}`);
+                    setTimeout(() => setAnimationClass(''), 150);
+                }, 150);
+            };
+
+            const currentItems = achievements.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+            const renderAchievement = (ach, index) => (
+                <div key={index} className="bg-white border border-stone-200 p-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group h-full">
+                    <div className="flex items-start space-x-4">
+                        <div className="flex-shrink-0 text-teal-600 mt-1">
+                            <Icon name={ach.icon} className="w-6 h-6" />
+                        </div>
+                        <div className="flex-grow">
+                            <h3 className="font-bold text-stone-800">{ach.title}</h3>
+                            <p className="text-stone-600 text-sm mt-1">{ach.description}</p>
+                            <a href={ach.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-teal-600 hover:text-teal-700 mt-3">
+                                View Proof <Icon name="ArrowRight" className="ml-1 w-4 h-4" />
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="w-full px-4 lg:w-1/2 xl:w-1/3">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-10 dark:bg-slate-700 dark: transition dark:duration-500 dark:ease-in-out">
-                        <img src="https://source.unsplash.com/360x200?keyboard" class="w-full" alt="Programming" />
-                        <div class="py-8 px-6">
-                            <h3>
-                                <a href="#" class="block mb-3 font-semibold text-xl text-dark hover:text-primary truncate dark:text-white dark: transition dark:duration-500 dark:ease-in-out">RxSwift in iOS Development</a>
-                            </h3>
-                            <p class="font-medium text-base text-secondary mb-6">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos iure dolore reprehenderit? </p>
-                            <a href="#" class="font-medium text-sm text-white bg-primary py-2 px-4 rounded-lg hover:opacity-80">Read More</a>
+            );
+
+            let layout;
+            if (achievements.length < 4) {
+                let gridClasses = "grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto";
+                if (achievements.length === 1) {
+                    gridClasses = "flex justify-center max-w-md mx-auto";
+                } else if (achievements.length === 2) {
+                    gridClasses = "grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto";
+                }
+                layout = (
+                    <div className={gridClasses}>
+                        {achievements.map(renderAchievement)}
+                    </div>
+                );
+            } else {
+                layout = (
+                    <>
+                        <div className="relative">
+                            <div className="overflow-hidden">
+                                <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-300 ${animationClass}`}>
+                                    {currentItems.map(renderAchievement)}
+                                </div>
+                            </div>
+                            {totalPages > 1 && currentPage > 1 && (
+                                <button onClick={() => handlePageChange(currentPage - 1)} className="absolute top-1/2 -left-4 md:-left-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10">
+                                    <Icon name="ArrowLeft" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                            {totalPages > 1 && currentPage < totalPages && (
+                                <button onClick={() => handlePageChange(currentPage + 1)} className="absolute top-1/2 -right-4 md:-right-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10">
+                                    <Icon name="ArrowRight" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center mt-12 space-x-2">
+                                {Array.from({ length: totalPages }).map((_, i) => (
+                                    <button key={i} onClick={() => handlePageChange(i + 1)} className={`w-3 h-3 rounded-full transition-colors ${currentPage === i + 1 ? 'bg-teal-600' : 'bg-stone-300 hover:bg-stone-400'}`}></button>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                );
+            }
+
+            return (
+                <section id="achievements" className="py-20 bg-stone-50 border-t border-stone-200">
+                    <div className="container mx-auto px-6">
+                        <h2 className="text-3xl font-bold text-center text-stone-800 mb-12">Key Achievements</h2>
+                        {layout}
+                    </div>
+                </section>
+            );
+        };
+
+        const PaginatedSection = ({ items, renderItem, sectionId, title, bgColor = 'bg-white' }) => {
+            const [currentPage, setCurrentPage] = React.useState(1);
+            const [animationClass, setAnimationClass] = React.useState('');
+            const itemsPerPage = 3;
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+            
+            const handlePageChange = (newPage) => {
+                if (newPage === currentPage || newPage < 1 || newPage > totalPages) return;
+                
+                const direction = newPage > currentPage ? 'left' : 'right';
+                setAnimationClass(`slide-out-${direction}`);
+
+                setTimeout(() => {
+                    setCurrentPage(newPage);
+                    setAnimationClass(`slide-in-from-${direction === 'left' ? 'right' : 'left'}`);
+                    setTimeout(() => setAnimationClass(''), 150);
+                }, 150);
+            };
+
+            const currentItems = items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+            return (
+                <section id={sectionId} className={`py-20 ${bgColor} border-t border-stone-200`}>
+                    <div className="container mx-auto px-6">
+                        <h2 className="text-3xl font-bold text-center text-stone-800 mb-12">{title}</h2>
+                        <div className="relative">
+                            <div className="overflow-hidden">
+                                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-300 ${animationClass}`}>
+                                    {currentItems.map((item, index) => (
+                                        <div key={index}>
+                                            {renderItem(item)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            {totalPages > 1 && currentPage > 1 && (
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    className="absolute top-1/2 -left-4 md:-left-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10"
+                                >
+                                    <Icon name="ArrowLeft" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                             {totalPages > 1 && currentPage < totalPages && (
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    className="absolute top-1/2 -right-4 md:-right-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10"
+                                >
+                                    <Icon name="ArrowRight" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center mt-12 space-x-2">
+                                {Array.from({ length: totalPages }).map((_, i) => (
+                                    <button 
+                                        key={i} 
+                                        onClick={() => handlePageChange(i + 1)}
+                                        className={`w-3 h-3 rounded-full transition-colors ${currentPage === i + 1 ? 'bg-teal-600' : 'bg-stone-300 hover:bg-stone-400'}`}
+                                    ></button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </section>
+            );
+        };
+
+        const ProjectCard = (project) => (
+            <div className="bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm h-full flex flex-col group">
+                <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />
+                <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="text-xl font-bold text-stone-800 mb-2">{project.title}</h3>
+                    <p className="text-stone-600 mb-4 flex-grow">{project.description}</p>
+                    <div className="mb-4">
+                        {project.tags.map((tag, i) => (
+                        <span key={i} className="inline-block bg-teal-50 text-teal-800 text-xs font-semibold mr-2 mb-2 px-2.5 py-1 rounded-full">{tag}</span>
+                        ))}
+                    </div>
+                    <div className="mt-auto pt-4 border-t border-stone-200 flex justify-between items-center">
+                        <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors flex items-center z-10">
+                            <Icon name="Github" className="w-5 h-5 mr-2"/> Source
+                        </a>
+                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-stone-500 hover:text-teal-600 transition-colors flex items-center z-10">
+                            <Icon name="ArrowRight" className="w-5 h-5 mr-2"/> Live Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const BlogCard = (post) => (
+             <a href={post.url} target="_blank" rel="noopener noreferrer" className="block bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm h-full group">
+                <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover" />
+                <div className="p-6">
+                    <h3 className="text-xl font-bold text-stone-800 mb-2">{post.title}</h3>
+                    <p className="text-stone-600 mb-4">{post.description}</p>
+                    <div>
+                        {post.tags.map((tag, i) => (
+                        <span key={i} className="inline-block bg-teal-50 text-teal-800 text-xs font-semibold mr-2 mb-2 px-2.5 py-1 rounded-full">{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            </a>
+        );
+        
+        const Experience = ({ experience }) => (
+            <section id="experience" className="py-20 bg-stone-50 border-t border-stone-200">
+                <div className="container mx-auto px-6">
+                    <h2 className="text-3xl font-bold text-center text-stone-800 mb-16">Work Experience</h2>
+                    <div className="relative max-w-3xl mx-auto">
+                        <div className="absolute left-0 md:left-1/2 top-0 h-full w-0.5 bg-stone-200 ml-4 md:ml-0 md:-translate-x-1/2"></div>
+                        {experience.map((job, index) => (
+                        <div key={index} className="relative pl-12 md:pl-0 mb-12">
+                            <div className="md:flex md:items-center" style={{ flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
+                                <div className="md:w-1/2">
+                                    <div className={`text-left ${index % 2 === 0 ? 'md:text-right md:pr-8' : 'md:text-left md:pl-8'}`}>
+                                        <p className="text-teal-600 font-semibold">{job.duration}</p>
+                                        <h3 className="text-xl font-bold text-stone-800 mt-1">{job.role}</h3>
+                                        <p className="text-stone-500">{job.company}</p>
+                                    </div>
+                                </div>
+                                <div className="md:w-1/2 mt-4 md:mt-0">
+                                    <div className={`relative bg-white p-6 rounded-lg shadow-md border border-stone-200 ${index % 2 === 0 ? 'md:ml-8' : 'md:mr-8'}`}>
+                                        <div className={`absolute top-3 w-4 h-4 bg-white border-stone-200 transform ${index % 2 === 0 ? 'left-0 -translate-x-1/2 border-t-0 border-r-0 border-b-2 border-l-2 rotate-[45deg]' : 'right-0 translate-x-1/2 border-b-0 border-l-0 border-t-2 border-r-2 rotate-[-315deg]'}`}></div>
+                                        <p className="text-stone-600 mb-4">{job.description}</p>
+                                        <ul className="space-y-2">
+                                            {job.responsibilities.map((resp, i) => (
+                                            <li key={i} className="flex items-start">
+                                                <Icon name="CheckCircle" className="w-4 h-4 text-teal-500 mr-2 mt-1 flex-shrink-0" />
+                                                <span className="text-stone-500 text-sm">{resp}</span>
+                                            </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="absolute left-0 md:left-1/2 top-1 w-8 h-8 bg-white border-4 border-stone-50 rounded-full flex items-center justify-center ml-4 md:ml-0 -translate-x-1/2">
+                                <Icon name="Briefcase" className="w-4 h-4 text-teal-600" />
+                            </div>
+                        </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        const Certifications = ({ certifications }) => {
+             const itemsPerPage = 3;
+            const totalPages = Math.ceil(certifications.length / itemsPerPage);
+            const [currentPage, setCurrentPage] = React.useState(1);
+            const [animationClass, setAnimationClass] = React.useState('');
+
+            const handlePageChange = (newPage) => {
+                if (newPage === currentPage || newPage < 1 || newPage > totalPages) return;
+                const direction = newPage > currentPage ? 'left' : 'right';
+                setAnimationClass(`slide-out-${direction}`);
+                setTimeout(() => {
+                    setCurrentPage(newPage);
+                    setAnimationClass(`slide-in-from-${direction === 'left' ? 'right' : 'left'}`);
+                    setTimeout(() => setAnimationClass(''), 150);
+                }, 150);
+            };
+
+            const currentItems = certifications.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+            const renderCertification = (cert, index) => (
+                 <div key={index} className="bg-white border border-stone-200 p-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group h-full">
+                    <div className="flex items-start space-x-4">
+                        <div className="relative flex-shrink-0 w-12 h-12">
+                            <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
+                                <Icon name={cert.icon} className="w-full h-full text-teal-600" />
+                            </div>
+                            <img src={cert.imageUrl} alt={cert.name} className="absolute inset-0 w-full h-full rounded-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        </div>
+                        <div className="flex-grow">
+                            <h3 className="font-bold text-stone-800 text-lg">{cert.name}</h3>
+                            <p className="text-stone-500">{cert.issuer} - {cert.year}</p>
+                             <a href={cert.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-teal-600 hover:text-teal-700 mt-2">
+                                View Proof <Icon name="ArrowRight" className="ml-1 w-4 h-4" />
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="w-full px-4 lg:w-1/2 xl:w-1/3">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-10 dark:bg-slate-700 dark: transition dark:duration-500 dark:ease-in-out">
-                        <img src="https://source.unsplash.com/360x200?macbook" class="w-full" alt="Programming" />
-                        <div class="py-8 px-6">
-                            <h3>
-                                <a href="#" class="block mb-3 font-semibold text-xl text-dark hover:text-primary truncate dark:text-white dark: transition dark:duration-500 dark:ease-in-out">iOS Development using UIKit Programmatically</a>
-                            </h3>
-                            <p class="font-medium text-base text-secondary mb-6">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos iure dolore reprehenderit? </p>
-                            <a href="#" class="font-medium text-sm text-white bg-primary py-2 px-4 rounded-lg hover:opacity-80">Read More</a>
+            );
+
+            let layout;
+            if (certifications.length < 4) {
+                let gridClasses = "grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto";
+                 if (certifications.length === 1) {
+                    gridClasses = "flex justify-center max-w-md mx-auto";
+                }
+                layout = (
+                    <div className={gridClasses}>
+                        {certifications.map(renderCertification)}
+                    </div>
+                );
+            } else {
+                 layout = (
+                    <>
+                        <div className="relative">
+                            <div className="overflow-hidden">
+                                <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 transition-all duration-300 ${animationClass}`}>
+                                    {currentItems.map(renderCertification)}
+                                </div>
+                            </div>
+                            {totalPages > 1 && currentPage > 1 && (
+                                <button onClick={() => handlePageChange(currentPage - 1)} className="absolute top-1/2 -left-4 md:-left-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10">
+                                    <Icon name="ArrowLeft" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                            {totalPages > 1 && currentPage < totalPages && (
+                                <button onClick={() => handlePageChange(currentPage + 1)} className="absolute top-1/2 -right-4 md:-right-16 transform -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:bg-stone-100 transition-colors z-10">
+                                    <Icon name="ArrowRight" className="w-6 h-6 text-stone-700" />
+                                </button>
+                            )}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center mt-12 space-x-2">
+                                {Array.from({ length: totalPages }).map((_, i) => (
+                                    <button key={i} onClick={() => handlePageChange(i + 1)} className={`w-3 h-3 rounded-full transition-colors ${currentPage === i + 1 ? 'bg-teal-600' : 'bg-stone-300 hover:bg-stone-400'}`}></button>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                );
+            }
+
+            return (
+                <section id="certifications" className="py-20 bg-white border-t border-stone-200">
+                    <div className="container mx-auto px-6">
+                        <h2 className="text-3xl font-bold text-center text-stone-800 mb-12">Certifications & Training</h2>
+                        <div className="max-w-3xl mx-auto">
+                            {layout}
                         </div>
                     </div>
+                </section>
+            );
+        };
+        
+        const Contact = ({ email }) => (
+            <section id="contact" className="py-20 bg-stone-50 text-center border-t border-stone-200">
+                <div className="container mx-auto px-6">
+                <h2 className="text-3xl font-bold text-center text-stone-800 mb-4">Let's Connect</h2>
+                <p className="text-stone-600 mb-8 max-w-xl mx-auto">I'm currently open to new opportunities and collaborations. Feel free to reach out if you want to build something amazing together.</p>
+                <a href={`mailto:${email}`} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 px-8 rounded-lg transition-transform transform hover:scale-105 inline-block">
+                    Say Hello
+                </a>
                 </div>
-            </div>
-        </div>
-    </section>
-    <!-- Blog Section End -->
-    
-    <!-- Contact Section Start -->
-    <section id="contact" class="pt-36 pb-32 dark:bg-slate-800 dark: transition dark:duration-500 dark:ease-in-out">
-        <div class="container">
-            <div class="w-full px-4">
-                <div class="max-w-xl mx-auto text-center mb-16">
-                    <h4 class="font-semibold text-lg text-primary mb-2">Contact</h4>
-                    <h2 class="font-bold text-dark text-3xl mb-4
-                    dark:text-white dark: transition dark:duration-500 dark:ease-in-out">Contact Me</h2>
-                    <p class="font-medium text-md text-secondary">I’m more than welcome for any new opportunities! I’m up for any questions you may have or just a quick little chat! I’ll get back to you as soon as I can.</p>
+            </section>
+        );
+
+        const Footer = ({ name }) => (
+            <footer className="bg-white border-t border-stone-200">
+                <div className="container mx-auto px-6 py-6 text-center text-stone-500">
+                <p>&copy; {new Date().getFullYear()} {name}. All Rights Reserved.</p>
                 </div>
-            </div>
-        <form>
-            <div class="w-full lg:w-2/3 lg:mx-auto">
-            <div class="w-full px-4 mb-8">
-                <label for="name" class="text-base font-bold text-primary">Name</label>
-                <input type="text" id="name" class="w-full bg-slate-200 text-dark p-3 rounded-md focus:outline-none focus:ring-primary focus:ring-1 focus: border-primary"/>
-            </div>
-            <div class="w-full px-4 mb-8">
-                <label for="email" class="text-base font-bold text-primary">Email</label>
-                <input type="email" id="email" class="w-full bg-slate-200 text-dark p-3 rounded-md focus:outline-none focus:ring-primary focus:ring-1 focus: border-primary"/>
-            </div>
-            <div class="w-full px-4 mb-8">
-                <label for="message" class="text-base font-bold text-primary">Message</label>
-                <textarea type="text" id="message" class="w-full bg-slate-200 text-dark p-3 rounded-md focus:outline-none focus:ring-primary focus:ring-1 focus: border-primary h-32"></textarea>
-            </div>
-            <div class="w-full">
-                <button class="text-base font-semibold text-white bg-primary py-3 px-8 rounded-full w-full hover:opacity-80 hover:shadow-lg transition duration-500">Send the message</button>
-            </div>
-        </div>
-        </form>
-        </div>
-    </section>
-    <!-- Contact Section End -->
+            </footer>
+        );
 
-    <!-- Footer Start -->
-    <footer class="bg-dark pt-24 pb-12">
-        <div class="container">
-            <div class="flex flex-wrap">
-                <div class="w-full px-4 mb-12 text-slate-300 font-medium md:w-1/3">
-                    <h2 class="font-bold text-4xl text-white mb-5">Finn Christoffer Kurniawan</h2>
-                    <h3 class="font-bold text-2xl mb-2">Contact Me</h3>
-                    <p>finn.christoffer@gmail.com</p>
-                    <p>Bandung</p>
+        // -- MAIN APP COMPONENT -- //
+        const App = () => {
+            const [portfolioData, setPortfolioData] = useState(null);
+
+            useEffect(() => {
+                const fetchData = async () => {
+                    if (!db) {
+                        console.error("Firestore is not initialized");
+                        return;
+                    }
+
+                    try {
+                        // Fetch main info
+                        const mainInfoSnap = await db.collection("main_info").doc("details").get();
+                        const mainInfo = mainInfoSnap.exists ? mainInfoSnap.data() : {};
+
+                        // Fetch collections
+                        const collectionsToFetch = ['achievements', 'projects', 'blogPosts', 'certifications', 'experience', 'skills'];
+                        const collectionsData = {};
+
+                        for (const coll of collectionsToFetch) {
+                            const snapshot = await db.collection(coll).orderBy("order").get();
+                            collectionsData[coll] = snapshot.docs.map(doc => doc.data());
+                        }
+
+                        setPortfolioData({ ...mainInfo, ...collectionsData });
+                    } catch (error) {
+                        console.error("Error fetching data from Firestore:", error);
+                        // You could set some default data here in case of an error
+                    }
+                };
+
+                if(db) {
+                    fetchData();
+                }
+            }, []);
+
+            if (!portfolioData) {
+                 return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <dotlottie-wc 
+                            src="https://lottie.host/445c027e-b5f6-42d2-8323-8c8da04ca745/nMRdj9O3gH.lottie" 
+                            style={{ width: '200px', height: '200px' }} 
+                            speed="1" 
+                            autoplay 
+                            loop>
+                        </dotlottie-wc>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="bg-white">
+                    <Header name={portfolioData.name} social={portfolioData.social} />
+                    <main>
+                        <Hero 
+                            name={portfolioData.name} 
+                            title={portfolioData.title} 
+                            bio={portfolioData.bio} 
+                            email={portfolioData.email}
+                            skills={portfolioData.skills || []}
+                            avatarUrl={portfolioData.avatarUrl}
+                        />
+                        <Achievements achievements={portfolioData.achievements || []} />
+                        <PaginatedSection 
+                            items={portfolioData.projects || []} 
+                            renderItem={ProjectCard} 
+                            sectionId="projects"
+                            title="Featured Projects"
+                            bgColor="bg-white"
+                        />
+                        <Experience experience={portfolioData.experience || []} />
+                        <Certifications certifications={portfolioData.certifications || []} />
+                        <Contact email={portfolioData.email} />
+                    </main>
+                    <Footer name={portfolioData.name} />
                 </div>
-                <div class="w-full px-4 mb-12 md:w-1/3">
-                    <h3 class="font-semibold text-xl text-white mb-5 ">Kategori Tulisan</h3>
-                    <ul class="text-slate-300">
-                        <li>
-                            <a href="#" class="inline-block text-base hover:text-primary mb-3">Programming</a>
-                        </li>
-                        <li>
-                            <a href="#" class="inline-block text-base hover:text-primary mb-3">Design</a>
-                        </li>
-                        <li>
-                            <a href="#" class="inline-block text-base hover:text-primary mb-3">Photography</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="w-full px-4 mb-12 md:w-1/3">
-                    <h3 class="font-semibold text-xl text-white mb-5 ">Link</h3>
-                    <ul class="text-slate-300">
-                        <li>
-                            <a href="#home" class="inline-block text-base hover:text-primary mb-3">Home</a>
-                        </li>
-                        <li>
-                            <a href="#about" class="inline-block text-base hover:text-primary mb-3">About Me</a>
-                        </li>
-                        <li>
-                            <a href="#milestone" class="inline-block text-base hover:text-primary mb-3">Milestones</a>
-                        </li>
-                        <li>
-                            <a href="#portfolio" class="inline-block text-base hover:text-primary mb-3">Portfolio</a>
-                        </li>
-                        <li>
-                            <a href="#blog" class="inline-block text-base hover:text-primary mb-3">Blog</a>
-                        </li>
-                        <li>
-                            <a href="#contact" class="inline-block text-base hover:text-primary mb-3">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            );
+        }
 
-            <div class="w-full pt-10 border-t border-slate-700">
-                <div class="flex items-center justify-center mb-5">
-                    <!-- LinkedIn -->
-                     <a href="https://www.linkedin.com/in/finnchristoffer/" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6 .286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                     </a>
+        // This line finds the 'root' div and renders our App component into it using the new React 18 API.
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
 
-                     <!-- GitHub -->
-                     <a href="https://github.com/finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                     </a>
-
-                     <!-- Youtube -->
-                     <a href="https://www.youtube.com/channel/UCINUxcUl_2JSQ5LkZHhQvcw" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>YouTube</title><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                     </a>
-
-                     <!-- Instagram -->
-                     <a href="https://www.instagram.com/finnchristoffer/" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Instagram</title><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
-                     </a>
-
-                     <!-- Medium -->
-                     <a href="https://medium.com/@finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Medium</title><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
-                     </a>
-
-                     <!-- Tiktok -->
-                     <a href="https://www.tiktok.com/@finnchristoffer" target="_blank" class="w-9 h-9 mr-3 rounded-full flex justify-center items-center border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-                         <svg role="img" width="20" class="fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>TikTok</title><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-                     </a>
-                 </div>
-                 <p class="font-medium text-xs text-slate-500 text-center">Created by <span class="text-pink-500">❤️</span> <a href="https://www.linkedin.com/in/finnchristoffer/" target="_blank" class="font-bold text-primary" >Finn Christoffer Kurniawan</a>, using <a href="https://tailwindcss.com" class="font-bold text-sky-500">Tailwind CSS</a>.</p>
-            </div>
-        </div>
-    </footer>
-    <!-- Footer End -->
-
-    <!-- Back to top Start -->
-    <a href="#home" class="fixed justify-center items-center bottom-4 right-4 z-[9999] hidden h-14 w-14 rounded-full bg-primary p-4 hover:animate-pulse" id="to-top">
-        <span class="block h-5 w-5 border-t-2 border-l-2 rotate-45 mt-2"></span>
-    </a>
-    <!-- Back to top End -->
-    <script src="dist/js/script.js"></script>
+    </script>
 </body>
 </html>
+
