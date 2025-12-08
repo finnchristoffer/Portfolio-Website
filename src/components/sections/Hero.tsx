@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Mail } from 'lucide-react';
+import { ArrowRight, Mail, ChevronDown } from 'lucide-react';
 import { ImageWithSkeleton } from '@/components/ui/ImageWithSkeleton';
 import { AnimatedCharacters } from '@/components/ui/AnimatedText';
 import { MagneticButton } from '@/components/ui/MagneticButton';
@@ -218,6 +218,24 @@ export function Hero({ name, title, bio, email, skills, avatarUrl }: HeroProps) 
                         </motion.div>
                     </motion.div>
                 </div>
+            </motion.div>
+
+            {/* Scroll indicator */}
+            <motion.div
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
+                onClick={() => document.getElementById('achievements')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+                <motion.div
+                    animate={{ y: [0, 8, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+                    className="flex flex-col items-center"
+                >
+                    <span className="text-stone-400 text-xs font-medium mb-2 uppercase tracking-widest">Scroll</span>
+                    <ChevronDown className="w-6 h-6 text-stone-400" />
+                </motion.div>
             </motion.div>
         </section>
     );

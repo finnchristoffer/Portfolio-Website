@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, CheckCircle, Star, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { Award, CheckCircle, Star, ChevronLeft, ChevronRight, ArrowRight, Trophy, Zap } from 'lucide-react';
 import { TiltCard } from '@/components/ui/TiltCard';
 import type { Achievement } from '@/types/portfolio';
 
@@ -13,6 +13,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     Award,
     CheckCircle,
     Star,
+    Trophy,
+    Zap,
 };
 
 function DynamicIcon({ name, className }: { name: string; className?: string }) {
@@ -55,7 +57,7 @@ export function Achievements({ achievements }: AchievementsProps) {
     const renderAchievement = (ach: Achievement, index: number) => (
         <TiltCard key={index} className="h-full" tiltAmount={6}>
             <motion.div
-                className="bg-white border border-stone-200 p-6 rounded-lg h-full group relative overflow-hidden"
+                className="bg-white border border-stone-200 p-6 rounded-xl h-full group relative overflow-hidden"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -64,20 +66,24 @@ export function Achievements({ achievements }: AchievementsProps) {
                 }}
             >
                 {/* Subtle gradient accent */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-teal-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-teal-500 to-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
-                <div className="flex items-start space-x-4">
+                {/* Decorative background glow */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-teal-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="flex items-start space-x-4 relative">
                     <motion.div
-                        className="flex-shrink-0 text-teal-600 mt-1 p-2 bg-teal-50 rounded-lg"
+                        className="flex-shrink-0 mt-1 p-3 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl shadow-lg shadow-teal-500/25"
                         whileHover={{ rotate: 10, scale: 1.1 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     >
-                        <DynamicIcon name={ach.icon} className="w-6 h-6" />
+                        <DynamicIcon name={ach.icon} className="w-6 h-6 text-white" />
                     </motion.div>
                     <div className="flex-grow">
-                        <h3 className="font-bold text-stone-800 group-hover:text-teal-700 transition-colors">
+                        <h3 className="font-bold text-lg text-stone-800 group-hover:text-teal-700 transition-colors">
                             {ach.title}
                         </h3>
-                        <p className="text-stone-600 text-sm mt-1">{ach.description}</p>
+                        <p className="text-stone-600 text-sm mt-1 leading-relaxed">{ach.description}</p>
                         <motion.a
                             href={ach.url}
                             target="_blank"
@@ -187,8 +193,8 @@ export function Achievements({ achievements }: AchievementsProps) {
                                 key={i}
                                 onClick={() => handlePageChange(i + 1)}
                                 className={`w-3 h-3 rounded-full transition-colors ${currentPage === i + 1
-                                        ? 'bg-teal-600'
-                                        : 'bg-stone-300 hover:bg-stone-400'
+                                    ? 'bg-teal-600'
+                                    : 'bg-stone-300 hover:bg-stone-400'
                                     }`}
                                 whileHover={{ scale: 1.2 }}
                                 whileTap={{ scale: 0.9 }}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { ImageWithSkeleton } from '@/components/ui/ImageWithSkeleton';
 import type { Certification } from '@/types/portfolio';
 
@@ -43,7 +43,7 @@ export function Certifications({ certifications }: CertificationsProps) {
     const renderCertification = (cert: Certification, index: number) => (
         <motion.div
             key={index}
-            className="bg-white border border-stone-200 p-6 rounded-lg h-full group"
+            className="bg-white border border-stone-200 p-6 rounded-xl h-full group relative overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -52,44 +52,41 @@ export function Certifications({ certifications }: CertificationsProps) {
                 boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
             }}
         >
-            <div className="flex items-start space-x-4">
-                <div className="relative flex-shrink-0 w-12 h-12">
-                    {/* Icon (visible by default) */}
-                    <motion.div
-                        className="absolute inset-0 flex items-center justify-center"
-                        initial={false}
-                        animate={{ opacity: 1 }}
-                        whileHover={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <Award className="w-10 h-10 text-teal-600" />
-                    </motion.div>
+            {/* Top accent gradient */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-emerald-400" />
 
-                    {/* Image (visible on hover) */}
-                    <motion.div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    >
-                        <ImageWithSkeleton
-                            src={cert.imageUrl}
-                            alt={cert.name}
-                            className="w-full h-full rounded-full"
-                        />
-                    </motion.div>
-                </div>
+            <div className="flex items-start space-x-4">
+                {/* Always visible certification image */}
+                <motion.div
+                    className="flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden shadow-md border border-stone-100"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                >
+                    <ImageWithSkeleton
+                        src={cert.imageUrl}
+                        alt={cert.name}
+                        className="w-full h-full object-cover"
+                    />
+                </motion.div>
 
                 <div className="flex-grow">
-                    <h3 className="font-bold text-stone-800 text-lg">{cert.name}</h3>
-                    <p className="text-stone-500">
-                        {cert.issuer} - {cert.year}
+                    <h3 className="font-bold text-stone-800 text-lg group-hover:text-teal-700 transition-colors">
+                        {cert.name}
+                    </h3>
+                    <p className="text-stone-500 text-sm mt-0.5">
+                        {cert.issuer}
                     </p>
+                    <span className="inline-block bg-stone-100 text-stone-600 text-xs font-medium px-2 py-0.5 rounded-full mt-2">
+                        {cert.year}
+                    </span>
                     <motion.a
                         href={cert.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm font-semibold text-teal-600 hover:text-teal-700 mt-2"
+                        className="flex items-center text-sm font-semibold text-teal-600 hover:text-teal-700 mt-3"
                         whileHover={{ x: 5 }}
                     >
-                        View Proof <ArrowRight className="ml-1 w-4 h-4" />
+                        Verify Credential <ArrowRight className="ml-1 w-4 h-4" />
                     </motion.a>
                 </div>
             </div>
@@ -191,8 +188,8 @@ export function Certifications({ certifications }: CertificationsProps) {
                                     key={i}
                                     onClick={() => handlePageChange(i + 1)}
                                     className={`w-3 h-3 rounded-full transition-colors ${currentPage === i + 1
-                                            ? 'bg-teal-600'
-                                            : 'bg-stone-300 hover:bg-stone-400'
+                                        ? 'bg-teal-600'
+                                        : 'bg-stone-300 hover:bg-stone-400'
                                         }`}
                                     whileHover={{ scale: 1.2 }}
                                     whileTap={{ scale: 0.9 }}

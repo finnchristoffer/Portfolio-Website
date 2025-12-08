@@ -118,9 +118,9 @@ function App() {
                     <Projects projects={portfolioData.projects || []} />
                     <Experience experience={portfolioData.experience || []} />
                     <Certifications certifications={portfolioData.certifications || []} />
-                    <Contact email={portfolioData.email} />
+                    <Contact email={portfolioData.email} social={portfolioData.social} />
                 </main>
-                <Footer name={portfolioData.name} />
+                <Footer name={portfolioData.name} social={portfolioData.social} />
             </motion.div>
         </AnimatePresence>
     );

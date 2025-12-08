@@ -57,12 +57,12 @@ export function MagneticButton({
     return (
         <div
             ref={ref}
-            className="inline-block"
+            className="inline-flex"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
             <Component
-                className={className}
+                className={`flex items-center justify-center ${className}`}
                 style={{ x: springX, y: springY }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -73,3 +73,4 @@ export function MagneticButton({
         </div>
     );
 }
+
