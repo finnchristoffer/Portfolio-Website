@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Github, ArrowRight, ExternalLink, Sparkles } from 'lucide-react';
 import { ImageWithSkeleton } from '@/components/ui/ImageWithSkeleton';
 import { TiltCard } from '@/components/ui/TiltCard';
@@ -11,22 +11,60 @@ interface ProjectsProps {
 
 function FeaturedProjectCard({ project }: { project: Project }) {
     const [isHovered, setIsHovered] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const mouseX = useMotionValue(0.5);
+    const mouseY = useMotionValue(0.5);
+
+    // Parallax spring physics
+    const springConfig = { stiffness: 150, damping: 20 };
+    const parallaxX = useSpring(useTransform(mouseX, [0, 1], [-15, 15]), springConfig);
+    const parallaxY = useSpring(useTransform(mouseY, [0, 1], [-15, 15]), springConfig);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        mouseX.set((e.clientX - rect.left) / rect.width);
+        mouseY.set((e.clientY - rect.top) / rect.height);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+        mouseX.set(0.5);
+        mouseY.set(0.5);
+    };
+
+
+
+    // Floating particles data
+    const particles = [
+        { size: 4, x: '15%', y: '20%', delay: 0 },
+        { size: 6, x: '80%', y: '25%', delay: 0.5 },
+        { size: 3, x: '70%', y: '60%', delay: 1 },
+        { size: 5, x: '25%', y: '70%', delay: 1.5 },
+        { size: 4, x: '90%', y: '80%', delay: 2 },
+    ];
 
     return (
-        <TiltCard className="h-full" tiltAmount={3}>
+        <TiltCard className="h-full" tiltAmount={2}>
             <motion.div
-                className="relative bg-stone-900 rounded-2xl overflow-hidden shadow-2xl min-h-[500px] cursor-pointer"
+                ref={containerRef}
+                className="relative bg-stone-900 rounded-2xl overflow-hidden shadow-2xl min-h-[550px] cursor-pointer animated-gradient-border"
+                onMouseMove={handleMouseMove}
                 onHoverStart={() => setIsHovered(true)}
-                onHoverEnd={() => setIsHovered(false)}
+                onHoverEnd={handleMouseLeave}
                 whileHover={{
-                    boxShadow: '0 40px 80px -20px rgba(0, 0, 0, 0.4)',
+                    boxShadow: '0 50px 100px -30px rgba(20, 184, 166, 0.3)',
                 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.5 }}
             >
-                {/* Full banner image */}
+                {/* Parallax banner image */}
                 <motion.div
                     className="absolute inset-0"
-                    animate={{ scale: isHovered ? 1.05 : 1 }}
+                    style={{
+                        x: parallaxX,
+                        y: parallaxY,
+                        scale: isHovered ? 1.1 : 1.02,
+                    }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
                     <ImageWithSkeleton
@@ -36,106 +74,194 @@ function FeaturedProjectCard({ project }: { project: Project }) {
                     />
                 </motion.div>
 
-                {/* Gradient overlay - always visible, intensifies on hover */}
+                {/* Gradient overlay - enhanced with more depth */}
                 <motion.div
-                    className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"
-                    animate={{ opacity: isHovered ? 1 : 0.7 }}
-                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20"
+                    animate={{ opacity: isHovered ? 1 : 0.75 }}
+                    transition={{ duration: 0.4 }}
                 />
 
-                {/* Featured badge - always visible */}
-                <div className="absolute top-4 left-4 z-20 flex items-center bg-teal-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                    <Sparkles className="w-3.5 h-3.5 mr-1" />
-                    Featured Project
-                </div>
+                {/* Floating particles - visible on hover */}
+                <AnimatePresence>
+                    {isHovered && particles.map((particle, index) => (
+                        <motion.div
+                            key={index}
+                            className="absolute rounded-full bg-teal-400/60"
+                            style={{
+                                width: particle.size,
+                                height: particle.size,
+                                left: particle.x,
+                                top: particle.y,
+                            }}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{
+                                opacity: [0.3, 0.8, 0.3],
+                                scale: [0.8, 1.2, 0.8],
+                                y: [0, -15, 0],
+                            }}
+                            exit={{ opacity: 0, scale: 0 }}
+                            transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                delay: particle.delay,
+                                ease: 'easeInOut',
+                            }}
+                        />
+                    ))}
+                </AnimatePresence>
 
-                {/* Content container - positioned at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
-                    {/* Title - always visible */}
-                    <motion.h3
-                        className="text-3xl md:text-4xl font-bold mb-3"
-                        style={{
-                            textShadow: '0 2px 20px rgba(0,0,0,0.8)',
-                            color: isHovered ? '#5eead4' : '#ffffff'
-                        }}
-                    >
-                        {project.title}
-                    </motion.h3>
-
-                    {/* Content area with smooth crossfade */}
-                    <AnimatePresence mode="wait">
-                        {!isHovered ? (
-                            <motion.p
-                                key="hint"
-                                className="text-white/80 text-base font-medium flex items-center gap-2"
-                                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.6)' }}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.15 }}
-                            >
-                                <span className="inline-block w-5 h-0.5 bg-teal-400 rounded-full"></span>
-                                Hover to view details
-                            </motion.p>
-                        ) : (
-                            <motion.div
-                                key="details"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                {/* Description */}
-                                <p
-                                    className="text-white/90 mb-5 text-base leading-relaxed"
-                                    style={{ textShadow: '0 1px 8px rgba(0,0,0,0.5)' }}
-                                >
-                                    {project.description}
-                                </p>
-
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-2 mb-6 max-h-24 overflow-y-auto">
-                                    {project.tags.map((tag, i) => (
-                                        <span
-                                            key={i}
-                                            className="bg-white/10 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full border border-white/20"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-
-                                {/* Action buttons */}
-                                <div className="flex gap-4">
-                                    <a
-                                        href={project.repoUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-5 py-2.5 rounded-lg transition-all border border-white/20 hover:scale-105"
-                                    >
-                                        <Github className="w-5 h-5 mr-2" />
-                                        Source
-                                    </a>
-                                    <a
-                                        href={project.liveUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center bg-teal-600 hover:bg-teal-500 text-white px-5 py-2.5 rounded-lg transition-all hover:scale-105"
-                                    >
-                                        <ExternalLink className="w-5 h-5 mr-2" />
-                                        Live Demo
-                                    </a>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                {/* Corner accent */}
+                {/* Featured badge with pulse animation */}
                 <motion.div
-                    className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-teal-500/20 to-transparent"
-                    animate={{ opacity: isHovered ? 0.8 : 0.3 }}
-                    transition={{ duration: 0.3 }}
+                    className="absolute top-5 left-5 z-20 flex items-center gap-1.5 bg-gradient-to-r from-teal-500 to-teal-400 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg"
+                    animate={{
+                        boxShadow: isHovered
+                            ? ['0 0 0 0 rgba(20, 184, 166, 0.4)', '0 0 20px 8px rgba(20, 184, 166, 0.2)', '0 0 0 0 rgba(20, 184, 166, 0.4)']
+                            : '0 4px 15px -3px rgba(20, 184, 166, 0.3)',
+                    }}
+                    transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                >
+                    <motion.div
+                        animate={{ rotate: isHovered ? 360 : 0 }}
+                        transition={{ duration: 2, repeat: isHovered ? Infinity : 0, ease: 'linear' }}
+                    >
+                        <Sparkles className="w-3.5 h-3.5" />
+                    </motion.div>
+                    Featured Project
+                </motion.div>
+
+                {/* Content container - positioned at bottom with flex to push content down */}
+                <div className="absolute inset-0 p-8 md:p-10 z-10 flex flex-col justify-end">
+                    {/* Details that appear on hover - positioned above title */}
+                    <motion.div
+                        animate={{
+                            opacity: isHovered ? 1 : 0,
+                            y: isHovered ? 0 : 10,
+                        }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                        style={{ pointerEvents: isHovered ? 'auto' : 'none' }}
+                        className="mb-4"
+                    >
+                        {/* Description */}
+                        <motion.p
+                            className="text-white/90 mb-6 text-base md:text-lg leading-relaxed max-w-2xl"
+                            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
+                        >
+                            {project.description}
+                        </motion.p>
+
+                        {/* Tags with glass morphism */}
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            {project.tags.map((tag, i) => (
+                                <motion.span
+                                    key={i}
+                                    className="glass-morphism text-white text-sm px-4 py-1.5 rounded-full"
+                                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {tag}
+                                </motion.span>
+                            ))}
+                        </div>
+
+                        {/* Action buttons */}
+                        <div className="flex flex-wrap gap-4">
+                            <motion.a
+                                href={project.repoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="glow-button flex items-center glass-morphism hover:bg-white/20 text-white px-6 py-3 rounded-xl transition-all font-medium"
+                                whileHover={{ scale: 1.03, y: -2 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <motion.div
+                                    whileHover={{ rotate: 360 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <Github className="w-5 h-5 mr-2" />
+                                </motion.div>
+                                View Source
+                            </motion.a>
+                            <motion.a
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="glow-button flex items-center bg-gradient-to-r from-teal-500 to-teal-400 hover:from-teal-400 hover:to-teal-300 text-white px-6 py-3 rounded-xl transition-all font-medium shadow-lg shadow-teal-500/25"
+                                whileHover={{ scale: 1.03, y: -2 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <motion.div
+                                    whileHover={{ x: 3 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <ExternalLink className="w-5 h-5 mr-2" />
+                                </motion.div>
+                                Live Demo
+                            </motion.a>
+                        </div>
+                    </motion.div>
+
+                    {/* Title and hint wrapper - always at the very bottom left */}
+                    <div className="flex flex-col items-start">
+                        {/* Title with gradient on hover */}
+                        <motion.h3
+                            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2"
+                            style={{
+                                textShadow: '0 4px 30px rgba(0,0,0,0.8)',
+                            }}
+                            animate={{
+                                background: isHovered
+                                    ? 'linear-gradient(135deg, #5eead4 0%, #2dd4bf 50%, #14b8a6 100%)'
+                                    : 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                            }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                        >
+                            {project.title}
+                        </motion.h3>
+
+                        {/* Hover hint - directly below title, fades out on hover */}
+                        <motion.p
+                            className="text-white/80 text-base font-medium flex items-center gap-3"
+                            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.6)' }}
+                            animate={{
+                                opacity: isHovered ? 0 : 1,
+                                y: isHovered ? -5 : 0,
+                                height: isHovered ? 0 : 'auto',
+                            }}
+                            transition={{ duration: 0.4, ease: 'easeOut' }}
+                        >
+                            <motion.span
+                                className="inline-block w-8 h-0.5 bg-gradient-to-r from-teal-400 to-teal-300 rounded-full"
+                                animate={{ scaleX: [1, 1.2, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                            />
+                            Hover to explore
+                        </motion.p>
+                    </div>
+
+                </div>
+
+                {/* Corner accent with enhanced glow */}
+                <motion.div
+                    className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-teal-400/30 via-teal-500/10 to-transparent pointer-events-none"
+                    animate={{
+                        opacity: isHovered ? 1 : 0.4,
+                        scale: isHovered ? 1.2 : 1,
+                    }}
+                    transition={{ duration: 0.5 }}
+                />
+
+                {/* Bottom accent line */}
+                <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-teal-400 to-transparent"
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{
+                        scaleX: isHovered ? 1 : 0,
+                        opacity: isHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.5 }}
                 />
             </motion.div>
         </TiltCard>
@@ -179,7 +305,7 @@ function ProjectCard({ project }: { project: Project }) {
                     <h3 className="text-xl font-bold text-stone-800 mb-2 group-hover:text-teal-600 transition-colors">
                         {project.title}
                     </h3>
-                    <p className="text-stone-600 mb-4 flex-grow line-clamp-3">{project.description}</p>
+                    <p className="text-stone-600 mb-4 flex-grow line-clamp-5">{project.description}</p>
 
                     <div className="mb-4 flex flex-wrap">
                         {project.tags.map((tag, i) => (

@@ -12,6 +12,7 @@ const imagePaths: Record<string, string> = {
     projectJdSport: '/assets/banner_jdsport.jpg',
     projectEraspace: '/assets/banner_eraspace.png',
     projectDBank: '/assets/banner_dbankpro.png',
+    projectRawg: '/assets/banner_rawg.png',
 };
 
 export function ImageWithSkeleton({ src, alt, className = '' }: ImageWithSkeletonProps) {
